@@ -2,11 +2,12 @@
 <div>
     <div id="content" >
         <!-- v-drag -->
-        <div id="imgContent" v-drag  @mousewheel="rollImg()"  >
+        <div id="imgContent"   @mousewheel="rollImg()"  @mousedown="dragDiv" >
             <img id="bigImg" :src="img" />
             <canvas id="canvas" ref="markCanvasRef"></canvas>
         </div>
     </div>
+        <button type="primary"   style="margin: 20px;" @click="saveData">保存数据</button>
 
 </div>  
 </template>
@@ -23,13 +24,23 @@ export default {
         colorList:["#CDE213", "#E2137B", "#CBB8F9", "#13E2AA", "#A513E2", "#005BFF", "#12BB06", "#E28113", "#004197", "#00FF33","#5A0095", "#13B8E2", "#E1A500", "#E30000", "#DBEE7B", "#F8A8B2", "#000000", "#0B5500", "#64FFFA", "#5394F6"],
         colorDir:{},
         img:require("../assets/302.png"),
-        isDrop:false
+        isDrop:false,
+        keyN:false
     }
   },
   async mounted() {
     const testJson = require('../assets/302.json');
     this.markList = testJson.shapes
+    let that = this
+    document.onkeydown = function (k) {
+        let _key = window.event.keyCode
+        if(_key ==78){//N
+            that.keyN =!that.keyN
+        }
+        console.log(_key,'_key',that.keyN)
+    }
     this.initCanvas(); // 画布初始化
+    
   },
   methods: {
     //拿到标注的数据
@@ -66,7 +77,7 @@ export default {
             ctx.save()
             ctx.beginPath()
             //等待数据
-            ctx.rect(left, top, w, h)
+            ctx.rect(data.x, data.y, data.w, data.h);
             ctx.stroke()
         })
     },
@@ -95,43 +106,27 @@ export default {
                 console.log(cav);
                 let ctx = cav.getContext('2d');
                 ctx.strokeStyle = 'blue';
-                cav.style.cursor = 'pointer';
+                cav.style.cursor = !this.keyN?'pointer':'crosshair';
                 let i =0
+                const rectList=[]
+                const lineList =[]
                 this.markList.forEach((item)=>{
                     if(!this.colorDir.hasOwnProperty(item.label)){
                         this.colorDir[item.label] = this.colorList[i++]
                     }
-                    if (item.points.length !== 0) {
-                        if(item.shape_type =="polygon"){//多边形
-                            this.drawLine(ctx,item)
-                        }else if (item.shape_type =="rectangle")//矩形
-                        {
-                            this.drawRectangle(ctx,item)
-                        }
-                        this.drawerPoint(ctx,item)
+                    if(item.shape_type =="rect"){
+                        this.drawRectangle(ctx,item)
+                        rectList.push(item)
+                    }else{
+                        // this.drawLine(ctx,item)
+                        // lineList.push(item)
                     }
                 })
                 // 调用封装的绘制方法
-                // draw(cav, this.markList)
-                // drawLine(cav,this.markList)
+                this.markList = draw(cav, rectList)
+                // this.markList =drawLine(cav,lineList)
             })
         },200)
-    },
-    
-    saveData(){
-        console.log("矩形数据",this.markList);
-    },
-    //放大
-    scaleLarge(){
-        var zoom = parseInt(document.getElementById('bigImg').style.zoom) || 100;
-        zoom += 10;
-        document.getElementById('bigImg').style.zoom = zoom + '%';
-    },
-    //缩小
-    scaleSmall(){
-          var zoom = parseInt(document.getElementById('bigImg').style.zoom) || 100;
-        zoom -= 10;
-        document.getElementById('bigImg').style.zoom = zoom + '%';
     },
     //滚轮缩放
     rollImg(){
@@ -149,7 +144,22 @@ export default {
         // }
         return false;
     },
-   
+    saveData(){
+        console.log("数据",this.markList);
+    },
+    dragDiv(e){
+        if(this.keyN)return
+        var el = document.getElementById('imgContent')
+        var disx = e.pageX - el.offsetLeft
+        var disy = e.pageY - el.offsetTop
+        document.onmousemove = function(e) {
+            el.style.left = e.pageX - disx + 'px'
+            el.style.top = e.pageY - disy + 'px'
+        }
+        document.onmouseup = function() {
+            document.onmousemove = document.onmouseup = null
+        }
+    }
   } 
 }   
 </script>

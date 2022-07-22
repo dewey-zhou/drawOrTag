@@ -2,11 +2,12 @@
 <div>
     <div id="content" >
         <!-- v-drag -->
-        <div id="imgContent" v-drag  @mousewheel="rollImg()"  >
+        <div id="imgContent"   @mousewheel="rollImg()"  >
             <img id="bigImg" :src="img" />
             <canvas id="canvas" ref="markCanvasRef"></canvas>
         </div>
     </div>
+        <button type="primary"   style="margin: 20px;" @click="saveData">保存数据</button>
 
 </div>  
 </template>
@@ -66,7 +67,7 @@ export default {
             ctx.save()
             ctx.beginPath()
             //等待数据
-            ctx.rect(left, top, w, h)
+            ctx.rect(data.x, data.y, data.w, data.h);
             ctx.stroke()
         })
     },
@@ -97,41 +98,25 @@ export default {
                 ctx.strokeStyle = 'blue';
                 cav.style.cursor = 'pointer';
                 let i =0
+                const rectList=[]
+                const lineList =[]
                 this.markList.forEach((item)=>{
                     if(!this.colorDir.hasOwnProperty(item.label)){
                         this.colorDir[item.label] = this.colorList[i++]
                     }
-                    if (item.points.length !== 0) {
-                        if(item.shape_type =="polygon"){//多边形
-                            this.drawLine(ctx,item)
-                        }else if (item.shape_type =="rectangle")//矩形
-                        {
-                            this.drawRectangle(ctx,item)
-                        }
-                        this.drawerPoint(ctx,item)
+                    if(item.shape_type =="rect"){
+                        // this.drawRectangle(ctx,item)
+                        // rectList.push(item)
+                    }else{
+                        this.drawLine(ctx,item)
+                        lineList.push(item)
                     }
                 })
                 // 调用封装的绘制方法
-                // draw(cav, this.markList)
-                // drawLine(cav,this.markList)
+                // this.markList = draw(cav, rectList)
+                this.markList =drawLine(cav,lineList)
             })
         },200)
-    },
-    
-    saveData(){
-        console.log("矩形数据",this.markList);
-    },
-    //放大
-    scaleLarge(){
-        var zoom = parseInt(document.getElementById('bigImg').style.zoom) || 100;
-        zoom += 10;
-        document.getElementById('bigImg').style.zoom = zoom + '%';
-    },
-    //缩小
-    scaleSmall(){
-          var zoom = parseInt(document.getElementById('bigImg').style.zoom) || 100;
-        zoom -= 10;
-        document.getElementById('bigImg').style.zoom = zoom + '%';
     },
     //滚轮缩放
     rollImg(){
@@ -149,7 +134,9 @@ export default {
         // }
         return false;
     },
-   
+    saveData(){
+        console.log("数据",this.markList);
+    },
   } 
 }   
 </script>

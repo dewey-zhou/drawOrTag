@@ -119,6 +119,40 @@
       "group_id": null,
       "shape_type": "polygon",
       "flags": {}
+    },
+    {
+      "label": "duoliao",
+      "points": [
+       [200,200],
+       [400,200],
+       [400,300],
+       [200,100]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "duoliao",
+      "points": [
+       [600,200],
+       [800,200],
+       [800,300],
+       [600,100]
+      ],
+      "group_id": null,
+      "shape_type": "polygon",
+      "flags": {}
+    },
+    {
+      "label": "duoliao",
+      "h":421,
+      "w":247,
+      "x":200,
+      "y":132,
+      "group_id": null,
+      "shape_type": "rect",
+      "flags": {}
     }
   ],
   "imagePath": "302.png",

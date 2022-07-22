@@ -30,6 +30,16 @@ const routes = [
         path:"/demo",
         name:"demo",
         component:()=> import("@/views/Demo")
+      },
+      {
+        path:"/drawRectangle",
+        name:"drawRectangle",
+        component:()=> import("@/views/DrawRectangle")
+      },
+      {
+        path:"/drawPolygon",
+        name:"drawPolygon",
+        component:()=> import("@/views/DrawPolygon")
       }
     ]
   },

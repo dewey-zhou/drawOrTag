@@ -1,10 +1,12 @@
 <template>
   <a-layout id="components-layout-demo-custom-trigger">
-    <a-layout-sider style="width:300px;background:#1089ae" >
+    <a-layout-sider style="width:300px;background:#1089ae;cursor:pointer" >
       <img class="logo" src="../assets/login.png">
       <div class="siderBarStyle" :class="`${currentModal == 'detect'?'active':''}`" @click="changeModal('detect')" >检测</div>
       <div class="siderBarStyle" :class="`${currentModal == 'divide'?'active':''}`"  @click="changeModal('divide')">分割</div>
       <div class="siderBarStyle" :class="`${currentModal == 'demo'?'active':''}`"  @click="changeModal('demo')">Demo</div>
+      <div class="siderBarStyle" :class="`${currentModal == 'drawRectangle'?'active':''}`"  @click="changeModal('drawRectangle')">DrawRectangle</div>
+      <div class="siderBarStyle" :class="`${currentModal == 'drawPolygon'?'active':''}`"  @click="changeModal('drawPolygon')">DrawPolygon</div>
 
 
     </a-layout-sider>
